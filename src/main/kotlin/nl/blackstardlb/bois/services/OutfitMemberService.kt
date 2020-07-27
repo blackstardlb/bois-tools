@@ -1,18 +1,13 @@
 package nl.blackstardlb.bois.services
 
-import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.reactor.mono
 import mu.KotlinLogging
 import nl.blackstardlb.bois.data.models.Constants
 import nl.blackstardlb.bois.data.models.FullOutfitMember
 import nl.blackstardlb.bois.data.repositories.OutfitCensusRepository
-import nl.blackstardlb.bois.services.exceptions.ResourceNotFoundException
 import nl.blackstardlb.bois.services.models.OutfitMemberRankRecommendation
 import nl.blackstardlb.bois.services.models.OutfitMemberStats
 import nl.blackstardlb.bois.services.models.OutfitRank
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 private val logger = KotlinLogging.logger {}
 
@@ -20,14 +15,11 @@ private val logger = KotlinLogging.logger {}
 class OutfitMemberService(
         val outfitCensusRepository: OutfitCensusRepository
 ) {
-    fun getOutfitMemberStats(memberId: String): Mono<OutfitMemberStats> = mono {
-        val fullOutfitMember = outfitCensusRepository.getFullOutfitMember(memberId).awaitFirstOrNull()
-                ?: throw ResourceNotFoundException()
-
-        fullOutfitMember.toOutFitMembersStats()
+    suspend fun getOutfitMemberStats(memberId: String): OutfitMemberStats {
+        return outfitCensusRepository.getFullOutfitMember(memberId).toOutFitMembersStats()
     }
 
-    fun getOutfitMemberRankChangeRecommendations(): Flux<OutfitMemberRankRecommendation> {
+    suspend fun getOutfitMemberRankChangeRecommendations(): List<OutfitMemberRankRecommendation> {
         return outfitCensusRepository.getFullOutfitMembersForTag("BOIS").filter { it.rankOrdinal > OutfitRank.Guardian.id }.map { it.toOutFitMembersStats().toRecommendation() }.filter { it.shouldRankBeChanged }
     }
 
@@ -35,7 +27,7 @@ class OutfitMemberService(
         val captures = this.charactersStatHistory.first { it.id == "facility_capture" }.week.values.sum()
         val kills = this.charactersStatHistory.first { it.id == "kills" }.week.values.sum()
         val defends = this.charactersStatHistory.first { it.id == "facility_defend" }.week.values.sum()
-        val minutesPlayed = this.charactersStatHistory.first { it.id == "time" }.week.values.sum() / 60
+        val minutesPlayed = this.charactersStatHistory.first { it.id == "time" }.week.values.sum() / 60.0
 
         val monthlyMedicTime = this.charactersPlayTimes.firstOrNull { it.profileId == Constants.Class.COMBAT_MEDIC }?.valueMonthly
                 ?: 0L
@@ -77,6 +69,7 @@ class OutfitMemberService(
         val newRank = OutfitRank.values().filter { it.isApplicable(this) }.minBy { it.id } ?: OutfitRank.TruthSeeker
         return OutfitMemberRankRecommendation(
                 this.name,
+                this.br,
                 currentRank,
                 newRank
         )

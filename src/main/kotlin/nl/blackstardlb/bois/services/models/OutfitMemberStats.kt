@@ -6,7 +6,7 @@ data class OutfitMemberStats(
         val br: Int,
         val prestigeLevel: Int,
         val outfitRank: Int,
-        val minutesPlayed: Long,
+        val minutesPlayed: Double,
         val medicPercentage: Int,
         val killsPM: Double,
         val capturesPH: Double,

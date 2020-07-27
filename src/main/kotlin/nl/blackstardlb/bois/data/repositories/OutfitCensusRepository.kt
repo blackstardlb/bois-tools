@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface OutfitCensusRepository {
-    fun getOutfitForTag(tag: String): Mono<Outfit>
-    fun getFullOutfitMember(memberId: String): Mono<FullOutfitMember>
-    fun getFullOutfitMembersForTag(tag: String): Flux<FullOutfitMember>
+    suspend fun getOutfitForTag(tag: String): Outfit
+    suspend fun getFullOutfitMember(memberId: String): FullOutfitMember
+    suspend fun getFullOutfitMembersForTag(tag: String): List<FullOutfitMember>
 }

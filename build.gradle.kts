@@ -31,10 +31,13 @@ dependencies {
     implementation("com.github.kittinunf.fuel:fuel-reactor:$fuelVersion")
     implementation("com.github.kittinunf.fuel:fuel-coroutines:$fuelVersion")
 
+    implementation("org.apache.httpcomponents:httpclient:4.5.12")
+
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:0.11.0")
+
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.github.microutils:kotlin-logging:1.8.3")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

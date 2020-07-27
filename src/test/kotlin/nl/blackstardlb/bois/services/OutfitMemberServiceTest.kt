@@ -2,6 +2,8 @@ package nl.blackstardlb.bois.services
 
 import mu.KotlinLogging
 import nl.blackstardlb.bois.data.repositories.OutfitCensusRepository
+import nl.blackstardlb.bois.runTesting
+import nl.blackstardlb.bois.timed
 import org.amshove.kluent.shouldBeLessOrEqualTo
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
@@ -21,9 +23,9 @@ internal class OutfitMemberServiceTest {
     lateinit var outfitCensusRepository: OutfitCensusRepository
 
     @Test
-    fun getOutfitMemberRankChangeRecommendations() {
-        val boiz = outfitCensusRepository.getOutfitForTag("BOIS").block().shouldNotBeNull()
-        val list = outfitMemberService.getOutfitMemberRankChangeRecommendations().doOnNext { logger.info { it } }.collectList().block().shouldNotBeNull()
+    fun getOutfitMemberRankChangeRecommendations() = runTesting {
+        val boiz = outfitCensusRepository.getOutfitForTag("BOIS").shouldNotBeNull()
+        val list = timed("getOutfitMemberRankChangeRecommendations") { outfitMemberService.getOutfitMemberRankChangeRecommendations().onEach { logger.info { it } }.shouldNotBeNull() }
         list.size shouldBeLessOrEqualTo boiz.memberCount.toInt()
     }
 }

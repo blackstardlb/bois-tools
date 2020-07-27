@@ -1,25 +1,27 @@
 package nl.blackstardlb.bois.data.clients
 
-import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
-import reactor.util.retry.Retry
-import java.io.EOFException
-import java.lang.Exception
-import java.net.SocketTimeoutException
-import java.util.concurrent.TimeoutException
+import mu.KotlinLogging
+import nl.blackstardlb.bois.retryIO
+import nl.blackstardlb.bois.timed
+import org.apache.http.client.utils.URIBuilder
+import java.time.Duration
 
 interface CensusClient {
     companion object {
-        val retrySpec = Retry.maxInARow(5)
+        val timeout: Duration = Duration.ofSeconds(30)
     }
-    fun <T : Any> sendRequest(path: String, uriParameters: List<Pair<String, List<String>>>, clazz: Class<T>): Mono<T>
+
+    suspend fun <T : Any> sendRequest(path: String, uriParameters: List<Pair<String, List<String>>>, clazz: Class<T>): T
     fun shouldRetryOn(throwable: Throwable): Boolean
 }
 
-inline fun <reified T : Any> CensusClient.sendRequestWithRetry(path: String, uriParameters: List<Pair<String, List<String>>>): Mono<T> {
-    return this.sendRequest<T>(path, uriParameters).retryWhen(CensusClient.retrySpec.filter { this.shouldRetryOn(it) })
+suspend inline fun <reified T : Any> CensusClient.sendRequestWithRetry(path: String, uriParameters: List<Pair<String, List<String>>>): T {
+    return retryIO(5, { shouldRetryOn(it) }) { this.sendRequest<T>(path, uriParameters) }
 }
 
-inline fun <reified T : Any> CensusClient.sendRequest(path: String, uriParameters: List<Pair<String, List<String>>>): Mono<T> {
-    return this.sendRequest(path, uriParameters, T::class.java)
+suspend inline fun <reified T : Any> CensusClient.sendRequest(path: String, uriParameters: List<Pair<String, List<String>>>): T {
+    val uri = URIBuilder(path).also { builder ->
+        uriParameters.forEach { builder.addParameter(it.first, it.second.joinToString(",")) }
+    }.build()
+    return timed(uri.toString(), KotlinLogging.logger { }) { this.sendRequest(path, uriParameters, T::class.java) }
 }

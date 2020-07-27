@@ -2,8 +2,8 @@ package nl.blackstardlb.bois.data.clients
 
 import mu.KotlinLogging
 import nl.blackstardlb.bois.data.models.lists.OutfitList
+import nl.blackstardlb.bois.runTesting
 import org.junit.jupiter.api.Test
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -17,8 +17,8 @@ internal class CensusClientTest {
     lateinit var censusClient: CensusClient
 
     @Test
-    fun canSendMessage() {
-        val outfitList = censusClient.sendRequestWithRetry<OutfitList>("outfit", uriParameters = listOf("alias" to listOf("BOIS"))).block()
+    fun canSendMessage() = runTesting {
+        val outfitList = censusClient.sendRequestWithRetry<OutfitList>("outfit", uriParameters = listOf("alias" to listOf("BOIS")))
         logger.info { outfitList }
     }
 }

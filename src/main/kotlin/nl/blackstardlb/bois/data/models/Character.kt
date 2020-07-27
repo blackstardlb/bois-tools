@@ -11,5 +11,6 @@ data class Character(
         @JsonProperty("character_id") override val id: String,
         val name: Name,
         val battleRank: BattleRank,
-        val prestigeLevel: Int
+        val prestigeLevel: Int,
+        val times: Times
 ) : Idable
