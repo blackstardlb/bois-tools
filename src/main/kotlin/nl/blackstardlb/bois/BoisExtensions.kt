@@ -47,3 +47,16 @@ suspend fun <T> timed(message: String = "function", aLogger: KLogger = logger, b
 fun Throwable.simpleErrorString(): String {
     return "${this.javaClass.simpleName}(${this.message})"
 }
+
+fun Long.safeDivide(long: Long): Double {
+    if (long == 0L) return 0.0
+    return this / (long.toDouble())
+}
+
+
+fun Long.safeDivide(double: Double): Double {
+    if (double == 0.0) return 0.0
+    return this / (double)
+}
+
+fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()

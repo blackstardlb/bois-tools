@@ -8,7 +8,7 @@ import java.time.Duration
 
 interface CensusClient {
     companion object {
-        val timeout: Duration = Duration.ofSeconds(30)
+        val timeout: Duration = Duration.ofSeconds(20)
     }
 
     suspend fun <T : Any> sendRequest(path: String, uriParameters: List<Pair<String, List<String>>>, clazz: Class<T>): T

@@ -35,7 +35,7 @@ class CensusClientImpl(
             request.config = RequestConfig.custom().setSocketTimeout(CensusClient.timeout.toMillis().toInt()).build()
 
             val entityString = async {
-                logger.info { "--> ${URLDecoder.decode(uri.toString())}" }
+                logger.info { "--> $uri" }
                 EntityUtils.toString(client.execute(request).entity)
             }
             objectMapper.readValue(entityString.await(), clazz)

@@ -39,6 +39,14 @@ object Constants {
         const val CHARACTER = "character"
         const val CHARACTERS_STAT_HISTORY = "characters_stat_history"
         const val CHARACTERS_STAT = "characters_stat"
+        const val CHARACTERS_WEAPON_STAT = "characters_weapon_stat"
+        const val CHARACTERS_WEAPON_STAT_BY_FACTION = "characters_weapon_stat_by_faction"
+        const val CHARACTERS_EVENT = "characters_event"
+    }
+
+    object Items {
+        const val ARMORY_ORBITAL_STRIKE = "6009044"
+        const val ORBITAL_STRIKE = "6008742"
     }
     object Class {
         const val COMBAT_MEDIC = "4"
