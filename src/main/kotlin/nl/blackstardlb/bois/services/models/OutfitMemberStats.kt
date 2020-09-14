@@ -10,6 +10,7 @@ data class OutfitMemberStats(
         val minutesPlayedLastTwoWeeks: Double,
         val medicPercentage: Int,
         val killsPM: Double,
+        val kd: Double,
         val capturesPH: Double,
         val defencesPH: Double,
         val sundererSpawnsPM: Double,

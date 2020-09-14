@@ -36,12 +36,19 @@ suspend fun <T> timed(message: String = "function", aLogger: KLogger = logger, b
     val now = Instant.now()
     try {
         val value = block()
-        aLogger.info { "time: ${Duration.between(now, Instant.now()).seconds}s for $message" }
+        aLogger.info { "time: ${Duration.between(now, Instant.now()).pretty()} for $message" }
         return value
     } catch (e: Throwable) {
-        aLogger.info { "time: ${Duration.between(now, Instant.now()).seconds}s for failed $message with ${e.simpleErrorString()}" }
+        aLogger.info { "time: ${Duration.between(now, Instant.now()).pretty()} for failed $message with ${e.simpleErrorString()}" }
         throw e
     }
+}
+
+fun Duration.pretty(): String {
+    return this.toString()
+            .substring(2)
+            .replace("(\\d[HMS])(?!$)", "$1 ")
+            .toLowerCase();
 }
 
 fun Throwable.simpleErrorString(): String {

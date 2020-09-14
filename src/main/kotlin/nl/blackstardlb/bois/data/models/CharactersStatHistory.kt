@@ -10,4 +10,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 data class CharactersStatHistory(
         @JsonProperty("stat_name") override val id: String,
         val characterId: String,
-        val week: Map<String, Long>) : Idable
+        val week: Map<String, Long>,
+        val day: Map<String, Long>
+) : Idable
